@@ -1,0 +1,410 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>reveal.js</title>
+
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/reveal.css">
+  <link rel="stylesheet" href="css/theme/robot-lung.css">
+
+  <!-- Theme used for syntax highlighting of code -->
+  <link rel="stylesheet" href="lib/css/monokai.css">
+
+  <!-- LW styles -->
+  <style>
+    .white {
+      color: white !important;
+    }
+  </style>
+
+  <!-- Printing and PDF exports -->
+  <script>
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+    document.getElementsByTagName('head')[0].appendChild(link);
+  </script>
+</head>
+
+<body>
+  <div class="line top"></div>
+  <div class="line bottom"></div>
+  <div class="line left"></div>
+  <div class="line right"></div>
+  <div class="reveal">
+    <div class="slides">
+      <!-- <section data-markdown="solar_pv.md" data-separator="^\n---\n" data-separator-vertical="^\n\n"
+        data-separator-notes="^Note:" data-charset="iso-8859-15"> -->
+      <!-- </section> -->
+      <section id="title">
+        <h2>Identifying Solar PV from Aerial Imagery</h2>
+        <p class="small">@LaurenceWWatson</p>
+        <aside class="notes">
+          Locating solar panels is useful for better production forecasts, understanding load on the
+          low-voltage
+          electricity grid, and tracking solar growth across the world. In the UK, despite the Feed In Tariff
+          database,
+          many panel locations are not known. I used computer vision and machine learning techniques combined with
+          overhead aerial imagery to find and locate UK solar panels and you can too.
+        </aside>
+      </section>
+
+      <section>
+        <h3>Me</h3>
+      </section>
+
+      <section>
+        <h2>Why do UK solar panels need locating?</h2>
+      </section>
+
+      <section>
+        <h2>Better forecasting</h2>
+        <aside class="notes">Inaccuracy of production forecasts for intermittent generators like solar and wind
+          resources mean spinning reserves needed by National Grid. Better forecasts -> less standby generation needed,
+          which is usually more polluting.</aside>
+      </section>
+
+      <section>
+        <!-- Nowcasting -->
+        Nowcasting
+        <aside class="notes">
+          'Nowcasting' or near-realtime forecasting could make use of precise cloud-cover predictions combined with
+          accurate solar PV locations
+        </aside>
+      </section>
+
+      <section>
+        <h2>Don't we know where the PV is already?</h2>
+      </section>
+
+      <section>
+        <h2>Most of it, but not all</h2>
+        <!-- Image of UK  -->
+        <aside class="notes">
+          We know where most of it is. Large sites are all in the Renewable Energy Planning Database (~two thirds of
+          capacity). The Feed-in-Tariff database covers ~4GB of capacity - but not all of that is precisely located.
+          And now the Feed In Tariff is gone, at present there is no centralised method to capture new deployments.
+          This work is also useful as it could be applied to other countries, or to answer other questions.
+        </aside>
+      </section>
+
+      <section>
+        <section>
+          <h2>How can I locate solar PV?</h2>
+          <ol>
+            <li class="fragment">Get image data set of the UK</li>
+            <li class="fragment">Use Open Street Map labels for solar panels to create a training set</li>
+            <li class="fragment">Use semantic segmentation on all images to find the rest of the panels</li>
+            <li class="fragment">Write up and relax</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2>Semantic segmentation?</h2>
+          <!-- semantic segmentation image -->
+          <img src="img/semantic_seg.png">
+          <p>Image source: <a href="https://github.com/CSAILVision/semantic-segmentation-pytorch">CSAIL</a></p>
+        </section>
+      </section>
+
+      <section>
+        <h4>Workflow</h4>
+        <img src="img/workflow.png">
+      </section>
+
+      <!-- Digimap section -->
+      <section>
+        <h2>Ok, but where is the data?</h2>
+        <p class="fragment">Enter Digimap!</p>
+        <p class="fragment">Aerial Digimap product, licensed from Getmapping plc.</p>
+        <p class="fragment">25cm vertical ortho-photography</p>
+        <p class="fragment">2TB of imagery data...</p>
+        <p class="fragment">Thank you Digimap! 👏</p>
+        <aside class="notes">
+          Note: Data download - was going to be 100's of requests - so got in touch with Digimap and asked for a bulk
+          download. Machine learning with neural networks depends on large datasets.
+        </aside>
+      </section>
+
+      <section data-background="img/sz0094_rgb_250_06.jpg">
+        <h2 class="fragment white">Beautiful!</h2>
+      </section>
+
+      <!-- OSM section -->
+      <section>
+        <h2>Ok, but what about the labels?</h2>
+        <p class="fragment">Enter Open Street Map!</p>
+      </section>
+
+      <!-- RasterVision section -->
+      <section>
+        <section>
+          <h2>Ok, how do I do semantic segmentation...?</h2>
+          <p class="fragment">Enter <a href="https://rastervision.io/">RasterVision</a></p>
+          <blockquote class="fragment">
+            An open source framework for deep learning on satellite and aerial imagery.
+          </blockquote>
+          <p class="fragment">Thank you Azavea 👏</p>
+          <aside class="notes">
+            Note: By Azavea, a USA B-corp who use "Advanced geospatial technology and research for civic and social
+            impact". Also answered my questions on gitter.
+          </aside>
+        </section>
+        <section>
+          <img src="img/rastervision.png" style="max-height: 80vh">
+          <aside class="notes">
+            hmmm that workflow looks familiar doesn't it. RasterVision is set up to do one of three tasks -
+            classification of a small image 'chip', object detection - drawing a bounding box, and semantic
+            segmentation, which means labelling each pixel according to which class it is in. I want two classes only,
+            PV or not-PV.
+          </aside>
+        </section>
+      </section>
+
+      <!-- RasterVision Explanation -->
+      <section>
+        <section>
+          <h2>How to use RasterVision</h2>
+        </section>
+        <section>
+          <h2>Setup</h2>
+          <ul>
+            <li>Docker image</li>
+            <li>Must use Linux, due to `nvidia-docker` not supporting other OS'</li>
+            <li>Dependencies are a pain to manage otherwise</li>
+            <li>GPUs mandatory - model runs can easily take 12hrs+ depending on experiment</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Experiments</h2>
+
+          <p>RasterVision takes on a lot of the work that would be reasonably boilerplate between geospatial analysis
+            projects.</p>
+
+          <pre><code class="language-python" data-trim>
+            import rastervision as rv
+
+            ##########################################
+            # Experiment
+            ##########################################
+            
+            class SolarExperimentSet(rv.ExperimentSet):
+            def exp_main(self, test=False): 
+              
+              # experiment goes here
+          </code></pre>
+        </section>
+        <section>
+          <h2>Experiment Steps</h2>
+          <ul>
+            <li>SETUP</li>
+            <li>TASK</li>
+            <li>BACKEND</li>
+            <li>DATASET (TRAINING & VALIDATION)</li>
+            <li>ANALYZE</li>
+            <li>EXPERIMENT</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Setup</h2>
+          <pre><code class="language-python" data-trim>
+                  # Connect docker filepath mounted to my data directory
+                  base_uri = join(raw_uri, '/labels')
+
+                  # Experiment label, used to label config files
+                  exp_id = 'pv-detection-1'
+
+                  # Number of times passing a batch of images through the model
+                  num_steps = 1e5
+                  batch_size = 8
+                  # Specify whether or not to make debug chips (a zipped sample of png chips
+                  # that you can examine to help debug the chipping process)
+                  debug = True
+
+                  # Split the data into training and validation sets:
+                  # Randomize the order of all scene ids
+                  random.seed(5678)
+                  scene_ids = sorted(scene_ids)
+                  random.shuffle(scene_ids)
+          
+                  # Figure out how many scenes make up 80% of the whole set
+                  num_train_ids = round(len(scene_ids) * 0.8)
+                  # Split the scene ids into training and validation lists
+                  train_ids = scene_ids[0:num_train_ids]
+                  val_ids = scene_ids[num_train_ids:]
+          </code></pre>
+        </section>
+        <section>
+          <h2>Task</h2>
+          <pre><code class="language-python" data-trim>
+              # ------------- TASK -------------
+
+              task = rv.TaskConfig.builder(rv.SEMANTIC_SEGMENTATION) \
+                .with_chip_size(300) \
+                .with_classes({
+                'pv': (1, 'yellow'),
+                'background': (2, 'black')
+              }) \
+              .with_chip_options(
+                chips_per_scene=50,
+                debug_chip_probability=0.1,
+                negative_survival_probability=1.0,
+                target_classes=[1],
+                target_count_threshold=1000) \
+              .build()
+        </code></pre>
+        </section>
+
+        <section>
+          <h2>Backend</h2>
+          <pre><code class="language-python" data-trim>
+            # # ------------- BACKEND -------------
+            backend = rv.BackendConfig.builder(rv.TF_DEEPLAB) \
+              .with_task(task) \
+              .with_debug(debug) \
+              .with_batch_size(num_steps) \
+              .with_num_steps(batch_size) \
+              .with_model_defaults(rv.MOBILENET_V2) \
+              .build()
+
+            # Make scenes to pass to the DataSetConfig builder.
+            def make_scene(id):
+              ###
+
+            # Create lists of train and test scene configs
+            train_scenes = [make_scene(id) for id in train_ids]
+            val_scenes = [make_scene(id) for id in val_ids]
+            </code>
+            </pre>
+        </section>
+        <section>
+          <h2>Dataset</h2>
+          <pre><code class="language-python" data-trim>
+            # ------------- DATASET -------------
+            # Construct a DataSet config using the lists of train and
+            # validation scenes
+            dataset = rv.DatasetConfig.builder() \
+              .with_train_scenes(train_scenes) \
+              .with_validation_scenes(val_scenes) \
+              .build()
+          </code></pre>
+        </section>
+        <section>
+          <h2>Analyze</h2>
+          <pre><code class="language-python" data-trim>
+                # ------------- ANALYZE -------------
+                # We will need to convert this imagery from uint16 to uint8
+                # in order to use it. We specified that this conversion should take place
+                # when we built the train raster source but that process will require
+                # dataset-level statistics. To get these stats we need to create an
+                # analyzer.
+                analyzer = rv.AnalyzerConfig.builder(rv.STATS_ANALYZER) \
+                  .build()
+          </code></pre>
+        </section>
+        <section>
+          <h2>Experiment</h2>
+          <pre><code class="language-python" data-trim>
+          # ------------- EXPERIMENT -------------
+          experiment = rv.ExperimentConfig.builder() \
+            .with_id(exp_id) \
+            .with_task(task) \
+            .with_backend(backend) \
+            .with_analyzer(analyzer) \
+            .with_dataset(dataset) \
+            .with_root_uri('/opt/data') \
+            .build()
+
+          return experiment
+
+
+          if __name__ == '__name__':
+            rv.main()
+        </code></pre>
+        </section>
+        <section>
+          <h1>Run it!</h1>
+          <p>Start up the docker container</p>
+          <pre><code class="hljs" data-trim>
+          docker run --runtime=nvidia --rm -it -p 6006:6006 \
+            -v ${RV_QUICKSTART_CODE_DIR}:/opt/src/code \
+            -v ${RV_QUICKSTART_EXP_DIR}:/opt/data \
+            quay.io/azavea/raster-vision:gpu-latest /bin/bash
+        </code></pre>
+          <p>Fire away</p>
+          <pre><code class="hljs" data-trim>
+        rastervision run local -p find_the_solar_pv.py
+        </code></pre>
+        </section>
+
+      </section>
+      <!-- End RV explanation -->
+
+      <section>
+        <h2>Recap</h2>
+        <img src="img/pippin.jpg">
+      </section>
+
+      <section>
+        <h2>Recap</h2>
+        <p class="fragment">I want to identify solar PV from aerial imagery</p>
+        <ul>
+          <li class="fragment"><strong>Image data</strong> from Aerial Digimap</li>
+          <li class="fragment">Training a model with 9,508 <strong>labels</strong> from Open Street Map</li>
+          <li class="fragment"><strong>Model</strong> is 'off-the-shelf' neural network</li>
+          <li class="fragment">Analysis <strong>pipeline</strong>, training and prediction with RasterVision</li>
+        </ul>
+        <aside class="notes">
+          Pause.
+          Sum up where I am and what I'm about to do.
+          Create UK dataset with OSM images.
+          Only used 1763 image chips at this point (out of 244,000) - sorry Iain
+        </aside>
+      </section>
+
+      <section>
+        <h2>That would be too easy.</h2>
+      </section>
+
+      <section <!-- Credits -->
+        <section>
+          <h2>Thank you</h2>
+        </section>
+
+
+
+    </div>
+  </div>
+
+  <script src="js/reveal.js"></script>
+
+  <script>
+    // More info about config & dependencies:
+    // - https://github.com/hakimel/reveal.js#configuration
+    // - https://github.com/hakimel/reveal.js#dependencies
+    Reveal.initialize({
+      hash: true,
+      dependencies: [{
+          src: 'plugin/markdown/marked.js'
+        },
+        {
+          src: 'plugin/markdown/markdown.js'
+        },
+        {
+          src: 'plugin/highlight/highlight.js'
+        },
+        {
+          src: 'plugin/notes/notes.js',
+          async: true
+        }
+      ]
+    });
+  </script>
+</body>
+
+</html>
