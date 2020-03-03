@@ -19,6 +19,10 @@
     .white {
       color: white !important;
     }
+
+    img {
+      border: none !important;
+    }
   </style>
 
   <!-- Printing and PDF exports -->
@@ -43,7 +47,10 @@
       <!-- </section> -->
       <section id="title">
         <h2>Identifying Solar PV from Aerial Imagery</h2>
-        <p class="small">@LaurenceWWatson</p>
+        <p>Laurence Watson</p>
+        <p>Digimap GeoForum, March 2020</p>
+        <p style="font-size: 20px"><a href="https://twitter.com/laurencewwatson">@LaurenceWWatson</a></p>
+        <p style="font-size: 20px">Co-founder at <a href="https://treebeard.io">treebeard.io</a></p>
         <aside class="notes">
           Locating solar panels is useful for better production forecasts, understanding load on the
           low-voltage
@@ -55,23 +62,35 @@
       </section>
 
       <section>
-        <h3>Me</h3>
-      </section>
-
-      <section>
         <h2>Why do UK solar panels need locating?</h2>
       </section>
 
       <section>
         <h2>Better forecasting</h2>
+        <p><img src="img/openclimatefix.png" class="fragment"></p>
+        <p class="fragment">In the UK, better PV forecasts should save £1-10 million per year [1], and about 100,000
+          tonnes of CO2 per year.</p>
+        <p class="fragment">[1]<a
+            href="https://www.researchgate.net/profile/Jamie_Taylor7/project/PV-Live/attachment/58342d5c08ae5e4c8b365783/AS:431187387785227@1479814492614/download/JamieTaylor_PV_Live_v1_20161122.pdf">Taylor
+            et al, 2016</a></p>
         <aside class="notes">Inaccuracy of production forecasts for intermittent generators like solar and wind
           resources mean spinning reserves needed by National Grid. Better forecasts -> less standby generation needed,
-          which is usually more polluting.</aside>
+          which is usually more polluting.
+          The grid would require less spinning reserve if they had better PV forecasts for the next few hours. That is,
+          better PV forecasts would reduce carbon emissions, and save money. In the UK, better PV forecasts should save
+          £1-10 million per year (Taylor et al, 2016), and about 100,000 tonnes of CO2 per year. Scaled up globally, the
+          carbon savings should be of the order of tens of millions of tonnes per year.
+        </aside>
       </section>
 
       <section>
         <!-- Nowcasting -->
-        Nowcasting
+        <h4>Nowcasting</h4>
+        <iframe width="1008" height="567" src="https://www.youtube.com/embed/IOp-tj-IJpk" frameborder="0"
+          data-autoplay></iframe>
+        <p>Source: <a href="https://www.climatechangenews.com/2020/02/12/one-million-solar-panels-knew/">Open Climate
+            Fix</a>
+        </p>
         <aside class="notes">
           'Nowcasting' or near-realtime forecasting could make use of precise cloud-cover predictions combined with
           accurate solar PV locations
@@ -79,14 +98,11 @@
       </section>
 
       <section>
-        <h2>Don't we know where the PV is already?</h2>
-      </section>
-
-      <section>
-        <h2>Most of it, but not all</h2>
-        <!-- Image of UK  -->
+        <h3>Don't we know where the PV is already?</h3>
+        <img src="img/pv_postcode_area.png" style="max-height: 60vh" class="fragment">
         <aside class="notes">
-          We know where most of it is. Large sites are all in the Renewable Energy Planning Database (~two thirds of
+          We know where most of it is. 86% in total.
+          Large sites are all in the Renewable Energy Planning Database (~two thirds of
           capacity). The Feed-in-Tariff database covers ~4GB of capacity - but not all of that is precisely located.
           And now the Feed In Tariff is gone, at present there is no centralised method to capture new deployments.
           This work is also useful as it could be applied to other countries, or to answer other questions.
@@ -95,7 +111,7 @@
 
       <section>
         <section>
-          <h2>How can I locate solar PV?</h2>
+          <h2>My plan to <br>locate solar PV</h2>
           <ol>
             <li class="fragment">Get image data set of the UK</li>
             <li class="fragment">Use Open Street Map labels for solar panels to create a training set</li>
@@ -135,11 +151,43 @@
         <h2 class="fragment white">Beautiful!</h2>
       </section>
 
+      <section>
+        <h4>Image age</h4>
+        <img src="img/digimap_aerial_year.png" style="max-height:75vh">
+      </section>
+
       <!-- OSM section -->
       <section>
-        <h2>Ok, but what about the labels?</h2>
-        <p class="fragment">Enter Open Street Map!</p>
+        <section>
+          <h2>Ok, but what about the labels?</h2>
+          <p class="fragment">Enter Open Street Map!</p>
+          <p class="fragment">At the time, 15000 labels</p>
+          <p class="fragment">Now... 100,000+ !</p>
+        </section>
+        <section>
+          <img src="img/05_chart_OSM_bedzed.jpg">
+        </section>
+        <section>
+          <img src="img/05_osm_label_errors.jpg">
+        </section>
+
       </section>
+
+      <section>
+        <h2>Tools (python based)</h2>
+        <h3 class="fragment">Heavy lifting</h3>
+        <p class="fragment"><a href="https://geopandas.org/">geopandas</a></p>
+        <blockquote class="fragment">
+          GeoPandas is an open source project to make working with geospatial data in python easier.
+        </blockquote>
+        <p class="fragment"><a href="https://rasterio.readthedocs.io/en/latest/">rasterio</a></p>
+        <blockquote class="fragment">
+          Access to geospatial raster data
+        </blockquote>
+        <h3 class="fragment">Also useful:</h3>
+        <p class="fragment">shapely, pyproj, folium</p>
+      </section>
+
 
       <!-- RasterVision section -->
       <section>
@@ -170,6 +218,9 @@
       <section>
         <section>
           <h2>How to use RasterVision</h2>
+          <p>See my experiment script here: <a
+              href="https://github.com/Rabscuttler/raster-vision/tree/master/code">https://github.com/Rabscuttler/raster-vision/tree/master/code</a>
+          </p>
         </section>
         <section>
           <h2>Setup</h2>
@@ -346,8 +397,11 @@
       <!-- End RV explanation -->
 
       <section>
-        <h2>Recap</h2>
+        <h4>Pause</h4>
         <img src="img/pippin.jpg">
+        <aside class="notes">
+          My rabbit Pippin
+        </aside>
       </section>
 
       <section>
@@ -368,13 +422,81 @@
       </section>
 
       <section>
-        <h2>That would be too easy.</h2>
+        <h4>That would be too easy.</h4>
+        <img src="img/fail.png" style="max-height: 70vh">
       </section>
 
-      <section <!-- Credits -->
-        <section>
-          <h2>Thank you</h2>
-        </section>
+      <section>
+        <h2>
+          Creating a good training dataset is hard
+        </h2>
+      </section>
+
+      <section>
+        <h2>
+          Take two: train on an existing dataset
+        </h2>
+      </section>
+
+      <section>
+        <h2>
+          Predict on UK
+        </h2>
+      </section>
+
+      <section>
+        <h2>
+          Rigour?
+        </h2>
+        <p>Create a UK test set</p>
+
+      </section>
+
+
+      <section>
+        <h2>Results on a hand-selected UK set</h2>
+        <img src="img/confusion.png" class="fragment" style="height: 200px">
+        <img src="img/accuracy.png" class="fragment" style="height: 200px">
+      </section>
+
+      <section>
+        <h3>That's nice, I want pictures</h3>
+        <img src="img/bristol_farm.jpg" class="fragment" style="max-height: 70vh">
+        <aside class="notes">
+          This is a solar farm near Bristol. The small predictions here are also correct.
+          However, I'm cheating aren't I - because I said we already knew the large PV locations!
+          What about the small ones?
+        </aside>
+      </section>
+
+      <section>
+        <h3>Urban predictions</h3>
+        <img src="img/cambridge_preds.jpg" class="fragment" style="max-height: 70vh">
+        <aside class="notes">
+          Cambridge - lots of accurate predictions here.
+        </aside>
+      </section>
+
+      <section>
+        <h3>Detail</h3>
+        <img src="img/06_knowsley_predictions.jpg" class="fragment" style="max-height: 70vh">
+        <aside class="notes">
+          Knowsley - some hit some miss
+          But - some things like conservatories have not come up as false positives.
+        </aside>
+      </section>
+
+      <section>
+        <h3>Not right</h3>
+        <img src="img/bristol_docks.jpg" class="fragment" style="max-height: 70vh">
+        <aside class="notes">
+          Bristol docks confused the model
+        </aside>
+      </section>
+
+      <section>
+        <h2>Thank you</h2>
+      </section>
 
 
 
